@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِواق للضيافة - شاشة الترحيب</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Tajawal', sans-serif;
+            background-color: #030712;
+            color: #ffffff;
+        }
+
+        /* حاوية الفيديو */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* طبقة تظليل سينمائية خفيفة */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(3, 7, 18, 0.45);
+            z-index: 2;
+        }
+
+        /* زر تشغيل الفيديو وملء الشاشة */
+        .play-screen-btn {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            background: rgba(212, 175, 55, 0.9);
+            color: #030712;
+            border: none;
+            padding: 18px 36px;
+            font-size: 22px;
+            font-weight: 800;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: 0.3s;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .play-screen-btn:hover {
+            background: #facc15;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        /* كرت الترحيب (قابل للتعديل المباشر Editables) */
+        .welcome-card {
+            position: absolute;
+            bottom: 50px;
+            right: 50px;
+            z-index: 10;
+            background: rgba(6, 16, 30, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            padding: 35px 45px;
+            border-radius: 20px;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            display: none; /* يظهر بعد تشغيل الفيديو */
+        }
+
+        /* خاصية السماح بالكتابة والتعديل المباشر داخل الصفحة */
+        [contenteditable="true"] {
+            outline: 2px dashed rgba(212, 175, 55, 0.5);
+            outline-offset: 4px;
+            border-radius: 4px;
+        }
+        [contenteditable="true"]:hover {
+            outline-color: #d4af37;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .brand-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .welcome-text {
+            font-size: 22px;
+            line-height: 1.6;
+            color: #e2e8f0;
+            margin-bottom: 10px;
+        }
+
+        .guest-name {
+            color: #d4af37;
+            font-weight: 800;
+        }
+
+        .sub-text {
+            font-size: 15px;
+            color: #94a3b8;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        /* زر إرشادي للتعديل */
+        .edit-hint {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.6);
+            color: #d4af37;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- زر البداية السحرية (يشغل الفيديو، يكبر الشاشة، ويظهر التصميم) -->
+    <button class="play-screen-btn" id="startBtn">▶ تشغيل شاشة رِواق الفندقية</button>
+
+    <div class="edit-hint" id="editHint">💡 تلميح: يمكنك النقر مباشرة على أي نص أدناه وتعديله بحرية!</div>
+
+    <div class="video-container">
+        <!-- فيديو فندقي مباشر وعالي الجودة -->
+        <video id="hotelVideo" loop playsinline preload="auto">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-living-room-with-modern-decor-41547-large.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="overlay" id="overlay" style="display:none;"></div>
+
+    <!-- كرت الترحيب (كل النصوص بداخله قابلة للتعديل والكتابة المباشرة) -->
+    <div class="welcome-card" id="welcomeCard">
+        <div class="brand-title" contenteditable="true">أهلاً بك في رِواق للضيافة ☕✨</div>
+        <div class="welcome-text">
+            يسعدنا استقبال ضيفنا العزيز: <span class="guest-name" contenteditable="true" id="guestName">أستاذ مشاري</span>
+        </div>
+        <div class="sub-text" contenteditable="true">
+            نتمنى لكم إقامة مريحة وتجربة ضيافة فريدة تليق بكم.. استمتعوا بأوقاتكم ولا تترددوا بالتواصل معنا لخدمتكم.
+        </div>
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const hotelVideo = document.getElementById('hotelVideo');
+        const welcomeCard = document.getElementById('welcomeCard');
+        const overlay = document.getElementById('overlay');
+        const editHint = document.getElementById('editHint');
+
+        // عند النقر على زر التشغيل: يكبر الشاشة، يشغل الفيديو، ويظهر الكرت
+        startBtn.addEventListener('click', function() {
+            // تفعيل ملء الشاشة
+            const docEl = document.documentElement;
+            if (docEl.requestFullscreen) {
+                docEl.requestFullscreen();
+            } else if (docEl.webkitRequestFullscreen) {
+                docEl.webkitRequestFullscreen();
+            }
+
+            // تشغيل الفيديو بصوت مكتوم لضمان عدم حظره
+            hotelVideo.muted = true;
+            hotelVideo.play();
+
+            // إخفاء الزر وإظهار الشاشة والكرت
+            startBtn.style.display = 'none';
+            overlay.style.display = 'block';
+            welcomeCard.style.display = 'block';
+            editHint.style.display = 'block';
+        });
+
+        // سحب اسم الضيف من الرابط إن وجد، وإذا لم يوجد يبقى النص الافتراضي قابل للتعديل
+        const urlParams = new URLSearchParams(window.location.search);
+        const nameParam = urlParams.get('name');
+        if (nameParam) {
+            document.getElementById('guestName').innerText = decodeURIComponent(nameParam);
+        }
+    </script>
+</body>
+</html>
