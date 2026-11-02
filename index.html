@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِواق للضيافة - شاشة الترحيب</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Tajawal', sans-serif;
+            background-color: #0a192f;
+            color: #ffffff;
+        }
+
+        /* خلفية الفيديو الفاخرة */
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* طبقة حماية ضبابية للتصميم */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(10, 25, 47, 0.4) 0%, rgba(10, 25, 47, 0.7) 100%);
+            z-index: 2;
+        }
+
+        /* صندوق النص الترحيبي الفاخر */
+        .welcome-card {
+            position: absolute;
+            bottom: 60px;
+            right: 60px;
+            z-index: 3;
+            background: rgba(10, 25, 47, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 35px 45px;
+            border-radius: 20px;
+            max-width: 650px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .brand-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .welcome-text {
+            font-size: 22px;
+            line-height: 1.6;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+        }
+
+        .guest-name {
+            color: #d97706; /* لون ذهبي دافئ يناسب رِواق */
+            font-weight: 700;
+        }
+
+        .sub-text {
+            font-size: 16px;
+            color: #94a3b8;
+            margin-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 12px;
+        }
+
+        /* الساعة الرقمية أعلى الشاشة */
+        .clock-widget {
+            position: absolute;
+            top: 40px;
+            left: 50px;
+            z-index: 3;
+            background: rgba(10, 25, 47, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #e2e8f0;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الساعة الرقمية -->
+    <div class="clock-widget" id="liveClock">00:00</div>
+
+    <!-- حاوية الفيديو -->
+    <div class="video-container">
+        <video autoplay muted loop playsinline id="bgVideo">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-living-room-with-modern-decor-41547-large.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="overlay"></div>
+
+    <!-- بطاقة الترحيب -->
+    <div class="welcome-card">
+        <div class="brand-title">أهلاً بك في رِواق ☕✨</div>
+        <div class="welcome-text">
+            يسعدنا استقبال ضيفنا العزيز: <span class="guest-name" id="guestName">ضيفنا الكريم</span>
+        </div>
+        <div class="sub-text">
+            نتمنى أن تقدم لكم رِواق تجربة ضيافة تليق بكم.. استمتعوا بأوقاتكم ولا تترددوا بالتواصل معنا لخدمتكم.
+        </div>
+    </div>
+
+    <script>
+        // سحب اسم الضيف من رابط الصفحة تلقائياً (?name=فلان)
+        const urlParams = new URLSearchParams(window.location.search);
+        const nameParam = urlParams.get('name');
+        if (nameParam) {
+            document.getElementById('guestName').innerText = decodeURIComponent(nameParam);
+        }
+
+        // تحديث الساعة الرقمية
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('liveClock').innerText = `${hours}:${minutes}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>
