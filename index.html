@@ -37,7 +37,7 @@
             object-fit: cover;
         }
 
-        /* طبقة حماية ضبابية خفيفة للتصميم */
+        /* طبقة حماية ضبابية للتصميم */
         .overlay {
             position: absolute;
             top: 0;
@@ -48,7 +48,7 @@
             z-index: 2;
         }
 
-        /* صندوق النص الترحيبي الفاخر (Glassmorphism) */
+        /* صندوق النص الترحيبي الفاخر */
         .welcome-card {
             position: absolute;
             bottom: 60px;
@@ -120,7 +120,6 @@
     <!-- حاوية الفيديو -->
     <div class="video-container">
         <video autoplay muted loop playsinline id="bgVideo">
-            <!-- ضع رابط الفيديو الخاص بك هنا -->
             <source src="https://assets.mixkit.co/videos/preview/mixkit-living-room-with-modern-decor-41547-large.mp4" type="video/mp4">
         </video>
     </div>
@@ -139,6 +138,22 @@
     </div>
 
     <script>
-        // سحب اسم الضيف من رابط الصفحة تلقائياً (?name=محمد)
+        // سحب اسم الضيف من رابط الصفحة تلقائياً (?name=فلان)
         const urlParams = new URLSearchParams(window.location.search);
-        const nameParam = urlParams.get
+        const nameParam = urlParams.get('name');
+        if (nameParam) {
+            document.getElementById('guestName').innerText = decodeURIComponent(nameParam);
+        }
+
+        // تحديث الساعة الرقمية
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('liveClock').innerText = `${hours}:${minutes}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>
